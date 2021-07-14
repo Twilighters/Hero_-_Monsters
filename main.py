@@ -11,7 +11,6 @@ monster_attack = 0
 
 def choice_player() -> str:
     """Выбор игрока."""
-    pl_choice = ""
     pl_choice = input()
     while pl_choice != "1" and pl_choice != "2":
         pl_choice = input()
@@ -50,8 +49,9 @@ def sword() -> None:
     """Подбор меча и выбор игрока, брать его или нет."""
     increase_attack = random.randint(1, 25)
     global attack
+
     print(
-        "Вы нашли МЕЧ, с уроном",
+        "Вы нашли клинок, с уроном",
         str(increase_attack),
         "\nЧто вы будете делать с этим клинком? "
         "\n1 - заменить свой старый клинок, с "
@@ -59,7 +59,7 @@ def sword() -> None:
         str(attack),
         "\n" "2 - пройти мимо",
     )
-
+    print("MEЧ", str(increase_attack), "\n")
     current_choice = choice_player()
 
     if current_choice == "1":
@@ -69,8 +69,33 @@ def sword() -> None:
             str(increase_attack),
         )
     elif current_choice == "2":
-        pass
         print("вы отказались подбирать клинок, ваша атака не изменилась")
+
+
+def skirmish_with_monster() -> None:
+    """Встреча с монстром."""
+    global monster_counter
+    global hp
+    print(
+        "БОЙ",
+        str(monster_hp),
+        str(monster_attack),
+        "\n1 - атаковать чудовище\n2 - убежать",
+    )
+    fight_or_not = choice_player()
+    if fight_or_not == "1":
+        print("деремся")
+        fight()
+        if hp > 0:
+            monster_counter = monster_counter + 1
+        else:
+            print("ПОРАЖЕНИЕ")
+            sys.exit()
+
+    elif fight_or_not == "2":
+        dices = random.randint(0, hp)
+        hp = hp - dices
+        print("ты убежал, при этом потерял", dices, "единиц здоровья\n")
 
 
 def fight() -> None:
@@ -87,7 +112,7 @@ def game() -> None:
     """Процесс игры."""
     global monster_counter
     global hp
-    while monster_counter < 10:
+    while monster_counter <= 10 or hp >= 1:
         print("")
         print("Монстров убито", str(monster_counter))
         hero()
@@ -96,28 +121,22 @@ def game() -> None:
             apple()
         elif events == 2:
             monster()
-            print("БОЙ", str(monster_hp), str(monster_attack), "\n")
-            print("1 - атаковать чудовище\n2 - убежать")
-            fight_or_not = choice_player()
-            if fight_or_not == "1":
-                print("деремся")
-                fight()
-                monster_counter = monster_counter + 1
-            elif fight_or_not == "2":
-                print("Бежим")
-                dices = random.randint(0, hp)
-                hp = hp - dices
-
+            skirmish_with_monster()
+            if hp <= 0:
+                print("ПОРАЖЕНИЕ")
+                sys.exit()
         else:
             sword()
 
-        if hp <= 0:
+        if hp <= 0 or monster_counter == 10:
             break
-    if hp > 0:
-        print("ПОБЕДА!")
-    else:
-        print("ПОРАЖЕНИЕ! игра окончена")
+
+    if monster_counter == 10 and hp > 0:
+        print("ПОБЕДА")
+        sys.exit()
+    elif hp <= 0 and monster_counter <= 10:
+        print("ПОРАЖЕНИЕ")
         sys.exit()
 
 
-game()
+# game()

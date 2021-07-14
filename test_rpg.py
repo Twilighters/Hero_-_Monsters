@@ -7,9 +7,6 @@ import importlib
 rpg = importlib.import_module("main")
 
 
-# import main as rpg
-
-
 class RpgTestCase(TestCase):
     """Юнит тест для домашнего задания 1."""
 
